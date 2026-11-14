@@ -1,0 +1,16 @@
+{
+  "name": "herds-news",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "step1": "node --env-file=.env src/run.ts"
+  },
+  "dependencies": {
+    "ai": "^7.0.172",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.6",
+    "typescript": "^7.0.2"
+  }
+}

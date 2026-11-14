@@ -1,0 +1,23 @@
+[
+  { "room": "ogólne", "src": 
+    [
+      { 
+        "title": "Example News", 
+        "url": "https://bagatela.pl/aktualnosci/" 
+      },
+      {}
+    ]
+  },
+  { "room": "hobby", "src": [] },
+  { "room": "imprezy", "src": [] },
+  { "room": "jedzenie", "src": [] },
+  { "room": "komunikacja", "src": [] },
+  { "room": "kultura", "src": [] },
+  { "room": "miasto", "src": [] },
+  { "room": "mieszkanie", "src": [] },
+  { "room": "polecajki", "src": [] },
+  { "room": "praca", "src": [] },
+  { "room": "sport", "src": [] },
+  { "room": "uroda", "src": [] },
+  { "room": "zdrowie", "src": [] }
+]
