@@ -1,11 +1,10 @@
 [
-  { "room": "ogólne", "src": 
-    [
-      { 
-        "title": "Example News", 
-        "url": "https://bagatela.pl/aktualnosci/" 
-      },
-      {}
+  {
+    "room": "ogólne",
+    "src": [
+      { "title": "Bagatela", "url": "https://bagatela.pl/aktualnosci/" },
+      { "title": "UM Warszawa", "url": "https://teatrcapitol.pl/aktualnosci/" },
+      { "title": "Teatr Wielki", "url": "https://www.narodowy.pl/aktualnosci.html" }
     ]
   },
   { "room": "hobby", "src": [] },

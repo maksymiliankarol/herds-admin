@@ -1,0 +1,12 @@
+[
+  { 
+    "id": "warsaw", 
+    "country": "PL", 
+    "name": "Warszawa" 
+  },
+  { 
+    "id": "berlin", 
+    "country": "DE", 
+    "name": "Berlin" 
+  }
+]
