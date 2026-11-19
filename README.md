@@ -83,83 +83,51 @@ To add a city: add it to `cities.jsonc` and create `config/cities/<id>.jsonc`.
 # Return examples
 
 ```bash 
-pnpm news warsaw ogólne
+pnpm news krakow kultura --count 3 --summary source
 
-Warszawa (PL) / ogólne
+# Two sources per room so single summary with two paragraphs. Each paragraph is written from 3 newset article on source.
 
-[Bagatela] reading listing...
-  2026-11-17 Nowy repertuar na grudzień
+...
 
-[Teats] reading listing...
-  2026-11-16 Królowa Śniegu wraca na scenę
-
-[Teatr Wielki] reading listing...
-  2026-11-14 Premiera „Słodkiego ptaka młodości"
-
-Summarizing...
-
-Teatry zapowiadają grudzień i nową premierę
-
-Teatr przy ul. Kamienica ogłosił repertuar na grudzień, w którym znalazły się nowe tytuły i dodatkowe terminy. W Teatrze Capitol wraca „Królowa Śniegu", spektakl dla dzieci od 6 lat, z piosenkami i efektami scenicznymi. Teatr Narodowy pokazał premierę „Słodkiego ptaka młodości" Tennessee Williamsa w reżyserii Małgorzaty Bogajewskiej. Bilety na wszystkie wydarzenia można kupić online.
-
-Saved to articles/18-11-2026/warsaw-ogólne.md
 ```
 
 ```bash
-pnpm news warsaw ogólne --count 3
+pnpm news krakow kultura --summary source
 
-# Same flow, but 3 articles are listed per source and the summary covers all 9:
+# Two sources per room so single summary with two paragraphs. Each paragraph is written from newset article on source.
 
-Warszawa (PL) / ogólne
+## Teatr im. Juliusza Słowackiego
 
-[Bagatela] reading listing...
-  2026-11-17 Nowy repertuar na grudzień
-  2026-11-12 Zmiany w godzinach pracy kasy
-  2026-11-05 Spotkanie z autorem sztuki
+W minionym roku odeszli z życia trzej aktorzy związani z Krakowskim Teatrem im. Juliusza Słowackiego. Romuald Michalski, który grał w teatrze przez 14 lat, pełnił także funkcję dyrektora artystycznego w innych teatrach, m.in. w Koszalinie, i zmarł w wieku 87 lat. Ireneusz Pastuszak, absolwent PWST, występował w Krakowie w latach 1986–1992, a później w Tarnowie, gdzie był znanym aktorem; zmarł podczas wakacji w Maroku w wieku 65 lat. Ryszard Jasiński, związany z teatrem w latach 1980–2003, znany z ról w spektaklach m.in. *Syn z Pieszo* i *Weselu*, zmarł w wieku 69 lat. [1]
 
-[Teats] reading listing...
-  2026-11-16 Królowa Śniegu wraca na scenę
-  2026-11-10 Spotkania z Mikołajem w grudniu
-  2026-11-03 Nowa wystawa w foyer
+---
 
-[Teatr Wielki] reading listing...
-  2026-11-14 Premiera „Słodkiego ptaka młodości"
-  2026-11-09 Spektakl dla szkół
-  2026-11-02 Rozmowa z reżyserką premiery
+Maciej Pesta, który współpracował z krakowskim teatrem w spektaklu *Jedz*, występował wcześniej w teatrach w Kielcach, Bydgoszczy, Warszawie i Gdańsku. [2]
 
-Summarizing...
+- [1](https://teatrwkrakowie.pl/aktualnosci/odeszli-w-minionym-roku-pamietamy-4)
 
-Warszawskie teatry przygotowują się do świątecznego sezonu
+## Narodowy Stary Teatr
 
-Teatry ogłosiły grudniowy repertuar i zmiany w pracy kas biletowych. Capitol zaprasza rodziny na „Królowę Śniegu" oraz spotkania z Mikołajem po wybranych spektaklach, a w foyer otwarto nową wystawę. Teatr Narodowy po premierze „Słodkiego ptaka młodości" proponuje spektakl dla szkół i rozmowę z reżyserką. Jedna ze scen zaprasza też na spotkanie z autorem sztuki.
+27 listopada o godz. 20:30 w sali im. Heleny Modrzejewskiej na ul. Jagiellońskiej 5 odbędzie się spotkanie Jakuba Skrzywanka, zastępcy dyrektora Starego Teatru, z reżyserką Agnieszką Holland. Rozmowa będzie towarzyszyć premierom spektakli „E:/Migranci” i „Sąsiadów”, które poruszają tematy współczesnej wspólnoty, migracji i społecznych podziałów. [1]
 
-Saved to articles/18-11-2026/warsaw-ogólne.md
+---
+
+Agnieszka Holland to laureatka m.in. Złotego Globu, Złotego Lwa, BAFTY i trzykrotnie nominowana do Oscara. W swojej karierze wyreżyserowała ponad trzydzieści filmów, w tym „Zieloną Granicę” (2023) i „Pokot” (2017). W latach 2021–2024 była przewodniczącą Europejskiej Akademii Filmowej. [2]
+
+- [1](https://stary.pl/pl/polska-sprawdzam-spotkanie-z-agnieszka-holland/)
+
 ```
 
 ```bash 
-pnpm news warsaw ogólne --summary source
+pnpm news krakow kultura --summary room
 
-# The log is the same as in example 1. Only the summarizing part differs, with one block per source:
+# Two sources per room so single summary with two paragraphs. Each paragraph is written from newset article on source.
 
-Summarizing...
+Teatr im. Juliusza Słowackiego w Krakowie zaprasza na sylwestrowe spektakle 31 grudnia. Na Dużej Scenie będzie można obejrzeć „Proszę Państwa, Wyspiański umiera” Agaty Dudy-Gracz, a na Scenie MOS – „Szymborska. Kropki, przecinki, papierosy”. Oba przedstawienia połączone będą z toastem i sylwestrową atmosferą. Bilety są już dostępne [1].
 
-## Bagatela
+Narodowy Stary Teatr zaprasza na spotkanie z psychoanalizą 22 listopada o godz. 16:00. Po spektaklu „Zamknij oczy Nel. W pustyni i w puszczy – epilog” odbędzie się dyskusja z udziałem psychiatrów i aktorów, podczas której przyjrzą się znaczeniom kryjącym się w teatralnej opowieści [2].
 
-Nowy repertuar na grudzień
+- [1](https://teatrwkrakowie.pl/aktualnosci/sylwester-w-teatrze-slowackiego-dwie-sceny-dwie-niezwykle-opowiesci-i-wspolny-toast-za-nowy-rok)
+- [2](https://stary.pl/pl/teatr-a-psychoanaliza/)
 
-Teatr opublikował repertuar na grudzień z nowymi tytułami i dodatkowymi terminami. Część spektakli zagrana zostanie w weekendy. Bilety są dostępne online i w kasie teatru.
-
-## Teats
-
-Królowa Śniegu wraca na scenę
-
-Capitol przypomina spektakl dla dzieci od 6 lat, z piosenkami i efektami scenicznymi. Przedstawienia odbędą się o 10:30 i 14:00. Bilety można rezerwować online.
-
-## Teatr Wielki
-
-Premiera „Słodkiego ptaka młodości"
-
-Teatr Narodowy pokazał dramat Tennessee Williamsa w reżyserii Małgorzaty Bogajewskiej. W rolach głównych wystąpią Gabriela Muskała i Paweł Brzeszcz. Premiera odbyła się 14 listopada.
-
-Saved to articles/18-11-2026/warsaw-ogólne.md
 ```

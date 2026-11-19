@@ -4,8 +4,8 @@ import { join } from "node:path";
 import { parseArgs } from "node:util";
 import { z } from "zod";
 import { getMarkdown } from "./fetch/browser.ts";
-import { listDatedLinks } from "./ai/extract.ts";
 import { summarize } from "./ai/summarize.ts";
+import { pickNewestLinks } from "./ai/extract.ts";
 
 const Source = z.object({ title: z.string(), url: z.url() });
 const Rooms = z.array(z.object({ room: z.string(), src: z.array(Source) }));
@@ -51,42 +51,50 @@ if (!room || room.src.length === 0) throw new Error(`Room "${roomName}" has no s
 console.log(`${city.name} (${city.country}) / ${room.room}`);
 
 // --- Read the newest `count` articles of one source ---
-async function fetchArticles(source: Source): Promise<string[]> {
-  console.log(`\n[${source.title}] reading listing...`);
-  const items = await listDatedLinks(await getMarkdown(source.url));
-  items.sort((a, b) => b.date.localeCompare(a.date)); // newest first
+type Article = { title: string; url: string; page: string };
 
-  const pages: string[] = [];
-  for (const item of items.slice(0, count)) {
+async function fetchArticles(source: Source): Promise<Article[]> {
+  console.log(`\n[${source.title}] reading listing...`);
+  const items = await pickNewestLinks(await getMarkdown(source.url), count);
+  if (items.length === 0) console.warn("   no dated articles found");
+
+  const articles: Article[] = [];
+  for (const item of items) {
     console.log(`   ${item.date} ${item.title}`);
     try {
-      pages.push(await getMarkdown(item.url));
+      articles.push({ title: item.title, url: item.url, page: await getMarkdown(item.url) });
     } catch (err) {
       console.warn(`   skipped ${item.url}: ${(err as Error).message}`);
     }
   }
-  return pages;
+  return articles;
 }
 
 // --- Collect articles, one source at a time (keeps us under rate limits) ---
-const results: { title: string; pages: string[] }[] = [];
+const results: { title: string; articles: Article[] }[] = [];
 for (const source of room.src) {
   try {
-    results.push({ title: source.title, pages: await fetchArticles(source) });
+    results.push({ title: source.title, articles: await fetchArticles(source) });
   } catch (err) {
     console.warn(`   skipped source "${source.title}": ${(err as Error).message}`);
   }
 }
 
-// --- Summarize ---
+// --- Summarize, then add a link list under each summary ---
+const links = (articles: Article[]) =>
+  articles.map((a, i) => `- [${i + 1}](${a.url.replaceAll(")", "%29")})`).join("\n");
+
+const summarizeWithLinks = async (articles: Article[]) =>
+  `${await summarize(room.room, articles.map((a) => a.page))}\n\n${links(articles)}`;
+
 console.log("\nSummarizing...");
 const parts: string[] = [];
 if (mode === "room") {
-  const pages = results.flatMap((r) => r.pages);
-  if (pages.length > 0) parts.push(await summarize(room.room, pages));
+  const articles = results.flatMap((r) => r.articles);
+  if (articles.length > 0) parts.push(await summarizeWithLinks(articles));
 } else {
-  for (const { title, pages } of results.filter((r) => r.pages.length > 0)) {
-    parts.push(`## ${title}\n\n${await summarize(room.room, pages)}`);
+  for (const { title, articles } of results.filter((r) => r.articles.length > 0)) {
+    parts.push(`## ${title}\n\n${await summarizeWithLinks(articles)}`);
   }
 }
 if (parts.length === 0) throw new Error("No articles could be fetched");

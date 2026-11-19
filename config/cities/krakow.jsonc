@@ -29,13 +29,17 @@
     "url": "https://herds.metalogrom.com/room/6",
     "src": [
       { "title": "Teatr im. Juliusza Słowackiego", "url": "https://teatrwkrakowie.pl/aktualnosci" },
-      { "title": "Narodowy Stary Teatrs", "url": "https://stary.pl/pl/aktualnosci/" },
+      { "title": "Narodowy Stary Teatr", "url": "https://stary.pl/pl/aktualnosci/" },
       { "title": "Teatr Wielki", "url": "https://bagatela.pl/aktualnosci/" }
     ]
   },
   { 
-    "room": "miasto", 
-    "src": [] 
+    "room": "miasto",
+    "url": "https://herds.metalogrom.com/room/15",
+    "src": [
+      { "title": "Teatr im. Juliusza Słowackiego", "url": "https://teatrwkrakowie.pl/aktualnosci" },
+      { "title": "Narodowy Stary Teatr", "url": "https://stary.pl/pl/aktualnosci/" }
+    ]
   },
   { 
     "room": "mieszkanie", 
