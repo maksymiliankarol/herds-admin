@@ -1,4 +1,4 @@
-// Usage: pnpm news <city> <room> [--count N] [--summary room|source]
+// Usage: pnpm news <city> <room> [--count N]
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { parseArgs } from "node:util";
@@ -20,22 +20,15 @@ const readConfig = <T extends z.ZodType>(path: string, schema: T): z.infer<T> =>
 // --- CLI options ---
 const { values, positionals } = parseArgs({
   allowPositionals: true,
-  options: {
-    count: { type: "string", default: "1" },
-    summary: { type: "string", default: "room" },
-  },
+  options: { count: { type: "string", default: "1" } },
 });
 const [cityId, roomName] = positionals;
 if (!cityId || !roomName) {
-  throw new Error("Usage: pnpm news <city> <room> [--count N] [--summary room|source]");
+  throw new Error("Usage: pnpm news <city> <room> [--count N]");
 }
 const count = Number(values.count);
-const mode = values.summary;
 if (!Number.isInteger(count) || count < 1 || count > 5) {
   throw new Error("--count must be a whole number from 1 to 5");
-}
-if (mode !== "room" && mode !== "source") {
-  throw new Error('--summary must be "room" or "source"');
 }
 
 // --- Config ---
@@ -71,40 +64,26 @@ async function fetchArticles(source: Source): Promise<Article[]> {
 }
 
 // --- Collect articles, one source at a time (keeps us under rate limits) ---
-const results: { title: string; articles: Article[] }[] = [];
+const articles: Article[] = [];
 for (const source of room.src) {
   try {
-    results.push({ title: source.title, articles: await fetchArticles(source) });
+    articles.push(...(await fetchArticles(source)));
   } catch (err) {
     console.warn(`   skipped source "${source.title}": ${(err as Error).message}`);
   }
 }
+if (articles.length === 0) throw new Error("No articles could be fetched");
 
-// --- Summarize, then add a link list under each summary ---
-const links = (articles: Article[]) =>
-  articles.map((a, i) => `- [${i + 1}](${a.url.replaceAll(")", "%29")})`).join("\n");
-
-const summarizeWithLinks = async (articles: Article[]) =>
-  `${await summarize(room.room, articles.map((a) => a.page))}\n\n${links(articles)}`;
-
+// --- Summarize, then add a link list under the summary ---
 console.log("\nSummarizing...");
-const parts: string[] = [];
-if (mode === "room") {
-  const articles = results.flatMap((r) => r.articles);
-  if (articles.length > 0) parts.push(await summarizeWithLinks(articles));
-} else {
-  for (const { title, articles } of results.filter((r) => r.articles.length > 0)) {
-    parts.push(`## ${title}\n\n${await summarizeWithLinks(articles)}`);
-  }
-}
-if (parts.length === 0) throw new Error("No articles could be fetched");
+const links = articles.map((a, i) => `- [${i + 1}](${a.url.replaceAll(")", "%29")})`).join("\n");
+const text = `${await summarize(room.room, articles.map((a) => a.page))}\n\n${links}`;
 
 // --- Save to articles/dd-mm-yyyy/city-room.md ---
 const today = new Date().toLocaleDateString("en-GB").replaceAll("/", "-"); // dd-mm-yyyy
 const dir = join("articles", today);
 mkdirSync(dir, { recursive: true }); // creates the date folder only if missing
 const file = join(dir, `${city.id}-${room.room}.md`);
-const text = parts.join("\n\n");
 writeFileSync(file, `${text}\n`);
 
 console.log(`\n${text}\n\nSaved to ${file}`);

@@ -2,7 +2,7 @@
 import { generateText, Output } from "ai";
 import { z } from "zod";
 
-const MODEL = process.env.MODEL ?? "mistral/ministral-3b";
+const MODEL = process.env.MODEL ?? "mistral/ministral-8b";
 
 const schema = z.object({
   items: z.array(
