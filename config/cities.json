@@ -3,10 +3,5 @@
     "id": "krakow", 
     "country": "PL", 
     "name": "Kraków" 
-  },
-  { 
-    "id": "berlin", 
-    "country": "DE", 
-    "name": "Berlin" 
   }
 ]
