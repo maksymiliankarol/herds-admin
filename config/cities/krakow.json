@@ -10,7 +10,6 @@
     "src": [
       { "title": "Teatr w Krakowie im. J. Słowackiego", "url": "https://teatrwkrakowie.pl/aktualnosci" },
       { "title": "Teatr Bagatela", "url": "https://bagatela.pl/aktualnosci/" },
-      { "title": "Teatr Bagatela Facebook Page", "url": "https://www.facebook.com/TeatrBagatela?locale=pl_PL", "type": "feed" },
       { "title": "Teatr Stu", "url": "https://scenastu.pl/aktualnosci/" }
     ]
   },

@@ -1,7 +1,8 @@
 [
-  { 
-    "id": "krakow", 
-    "country": "PL", 
-    "name": "Kraków" 
+  {
+    "id": "krakow",
+    "country": "PL",
+    "name": "Kraków",
+    "language": "Polish"
   }
 ]

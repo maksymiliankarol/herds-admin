@@ -6,18 +6,21 @@ import { z } from "zod";
 import { getMarkdown } from "./fetch/browser.ts";
 import { summarize } from "./ai/summarize.ts";
 import { pickNewest } from "./ai/extract.ts";
-
-// How many of the newest items are read from each source, by source type.
-const NEWEST = { articles: 1, feed: 3 };
+import { getBlueskyPosts } from "./fetch/bluesky.ts";
 
 const Source = z.object({
   title: z.string(),
   url: z.url(),
-  type: z.enum(["articles", "feed"]).default("articles"),
+  type: z.enum(["articles", "bluesky"]).default("articles"),
 });
 const Rooms = z.array(z.object({ room: z.string(), src: z.array(Source) }));
 const Cities = z.array(
-  z.object({ id: z.string(), country: z.string().length(2), name: z.string() }),
+  z.object({
+    id: z.string(),
+    country: z.string().length(2),
+    name: z.string(),
+    language: z.string().min(1),
+  }),
 );
 type Source = z.infer<typeof Source>;
 
@@ -44,35 +47,21 @@ if (!room || room.src.length === 0) throw new Error(`Room "${roomName}" has no s
 console.log(`${city.name} (${city.country}) / ${room.room}`);
 
 // --- Read the newest items of one source ---
-// "articles": the page lists links, so each of the newest articles is opened on its own.
-// "feed": the posts are on the page itself, so no second fetch is needed.
-type Article = { title: string; url: string; page: string };
+// "articles": the page lists articles: pick the newest one, then open it on its own.
+// "bluesky": the newest posts come straight from the API, so no second fetch is needed.
+type Article = { url: string; page: string };
 
 async function fetchArticles(source: Source): Promise<Article[]> {
   console.log(`\n[${source.title}] reading ${source.type}...`);
-  const items = await pickNewest(
-    await getMarkdown(source.url),
-    NEWEST[source.type],
-    source.type,
-    source.url,
-  );
-  if (items.length === 0) console.warn("   no dated items found");
+  if (source.type === "bluesky") return getBlueskyPosts(source.url);
 
-  if (source.type === "feed") {
-    for (const item of items) console.log(`   ${item.date} ${item.title}`);
-    return items.map((item) => ({ title: item.title, url: item.url, page: item.text }));
+  const item = await pickNewest(await getMarkdown(source.url));
+  if (!item) {
+    console.warn("   no dated article found");
+    return [];
   }
-
-  const articles: Article[] = [];
-  for (const item of items) {
-    console.log(`   ${item.date} ${item.title}`);
-    try {
-      articles.push({ title: item.title, url: item.url, page: await getMarkdown(item.url) });
-    } catch (err) {
-      console.warn(`   skipped ${item.url}: ${(err as Error).message}`);
-    }
-  }
-  return articles;
+  console.log(`   ${item.date} ${item.title}`);
+  return [{ url: item.url, page: await getMarkdown(item.url) }];
 }
 
 // --- Collect articles, one source at a time (keeps us under rate limits) ---
@@ -81,7 +70,7 @@ for (const source of room.src) {
   try {
     articles.push(...(await fetchArticles(source)));
   } catch (err) {
-    console.warn(`   skipped source "${source.title}": ${(err as Error).message}`);
+    console.warn(`   skipped "${source.title}": ${(err as Error).message}`);
   }
 }
 if (articles.length === 0) throw new Error("No articles could be fetched");
@@ -89,7 +78,7 @@ if (articles.length === 0) throw new Error("No articles could be fetched");
 // --- Summarize, then add a link list under the summary ---
 console.log("\nSummarizing...");
 const links = articles.map((a, i) => `- [${i + 1}](${a.url.replaceAll(")", "%29")})`).join("\n");
-const text = `${await summarize(room.room, articles.map((a) => a.page))}\n\n${links}`;
+const text = `${await summarize(city.language, room.room, articles.map((a) => a.page))}\n\n${links}`;
 
 // --- Save to articles/dd-mm-yyyy/city-room.md ---
 const today = new Date().toLocaleDateString("en-GB").replaceAll("/", "-"); // dd-mm-yyyy
