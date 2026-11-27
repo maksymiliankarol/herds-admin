@@ -6,14 +6,17 @@ const POSTS = 3; // how many of the newest posts are read from each account
 const Feed = z.object({
   feed: z.array(
     z.object({
-      post: z.object({ uri: z.string(), record: z.object({ text: z.string().default("") }) }),
+      post: z.object({
+        uri: z.string(),
+        record: z.object({ text: z.string().default(""), createdAt: z.string() }),
+      }),
       reason: z.unknown().optional(), // set for reposts and pinned posts
     }),
   ),
 });
 
 // `profileUrl` looks like https://bsky.app/profile/<handle>
-export async function getBlueskyPosts(profileUrl: string): Promise<{ url: string; page: string }[]> {
+export async function getBlueskyPosts(profileUrl: string): Promise<{ url: string; page: string; date: string }[]> {
   const { hostname, pathname } = new URL(profileUrl);
   const handle = pathname.split("/")[2];
   if (hostname !== "bsky.app" || !pathname.startsWith("/profile/") || !handle) {
@@ -32,5 +35,6 @@ export async function getBlueskyPosts(profileUrl: string): Promise<{ url: string
     .map(({ post }) => ({
       url: `https://bsky.app/profile/${handle}/post/${post.uri.split("/").pop()}`,
       page: post.record.text,
+      date: post.record.createdAt.slice(0, 10),
     }));
 }

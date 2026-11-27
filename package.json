@@ -3,7 +3,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "news": "node --env-file=.env src/run.ts"
+    "news": "node --env-file=.env src/run.ts",
+    "admin": "node --env-file=.env src/admin.ts"
   },
   "dependencies": {
     "ai": "^7.0.172",

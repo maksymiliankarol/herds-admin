@@ -49,7 +49,7 @@ console.log(`${city.name} (${city.country}) / ${room.room}`);
 // --- Read the newest items of one source ---
 // "articles": the page lists articles: pick the newest one, then open it on its own.
 // "bluesky": the newest posts come straight from the API, so no second fetch is needed.
-type Article = { url: string; page: string };
+type Article = { url: string; page: string; date: string };
 
 async function fetchArticles(source: Source): Promise<Article[]> {
   console.log(`\n[${source.title}] reading ${source.type}...`);
@@ -61,7 +61,7 @@ async function fetchArticles(source: Source): Promise<Article[]> {
     return [];
   }
   console.log(`   ${item.date} ${item.title}`);
-  return [{ url: item.url, page: await getMarkdown(item.url) }];
+  return [{ url: item.url, date: item.date, page: await getMarkdown(item.url) }];
 }
 
 // --- Collect articles, one source at a time (keeps us under rate limits) ---
@@ -75,9 +75,17 @@ for (const source of room.src) {
 }
 if (articles.length === 0) throw new Error("No articles could be fetched");
 
+// 2026-11-27 -> 27-11-26
+const ddmmyy = (iso: string) => {
+  const [y, m, d] = iso.split("-");
+  return `${d}-${m}-${y.slice(2)}`;
+};
+
 // --- Summarize, then add a link list under the summary ---
 console.log("\nSummarizing...");
-const links = articles.map((a, i) => `- [${i + 1}](${a.url.replaceAll(")", "%29")})`).join("\n");
+const links = articles
+  .map((a, i) => `- [${i + 1}](${a.url.replaceAll(")", "%29")})(${ddmmyy(a.date)})`)
+  .join("\n");
 const text = `${await summarize(city.language, room.room, articles.map((a) => a.page))}\n\n${links}`;
 
 // --- Save to articles/dd-mm-yyyy/city-room.md ---

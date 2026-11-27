@@ -4,7 +4,12 @@
   { "room": "imprezy", "src": [] },
   { "room": "jedzenie", "src": [] },
   { "room": "komunikacja", "src": [] },
-  { "room": "kultura", "src": [] },
+  { 
+    "room": "kultura", 
+    "src": [
+      { "title": "Teatr w Krakowie im. J. Słowackiego", "url": "https://teatrwkrakowie.pl/aktualnosci" }
+    ]
+  },
   {
     "room": "kultura_teatr",
     "src": [
