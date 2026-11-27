@@ -4,7 +4,8 @@
   "type": "module",
   "scripts": {
     "news": "node --env-file=.env src/run.ts",
-    "admin": "node --env-file=.env src/admin.ts"
+    "admin": "node --env-file=.env src/admin.ts",
+    "check": "node --env-file=.env src/check.ts"
   },
   "dependencies": {
     "ai": "^7.0.172",
